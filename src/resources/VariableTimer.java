@@ -9,18 +9,28 @@ public abstract class VariableTimer {
 	private ScheduledExecutorService scheduler=Executors.newSingleThreadScheduledExecutor();
 	private boolean toEnd=false;
 	private long interval=1000;
+	private long initialDelay = 0;
 	
-	public VariableTimer(long interval) {
+	protected VariableTimer(long interval) {
 		this.interval=interval;
 		setScheduler();
 	}
 	
-	public VariableTimer() {
+	protected VariableTimer() {
 		
 	}
 	
 	public void setInterval(long interval) {
 		this.interval=interval;
+		this.initialDelay=0;
+		scheduler.shutdown();
+		scheduler=Executors.newSingleThreadScheduledExecutor();
+		setScheduler();
+	}
+	
+	public void setInterval(long interval, long delay) {
+		this.interval=interval;
+		this.initialDelay=delay;
 		scheduler.shutdown();
 		scheduler=Executors.newSingleThreadScheduledExecutor();
 		setScheduler();
@@ -28,6 +38,13 @@ public abstract class VariableTimer {
 	
 	public void setDelayedInterval(long interval) {
 		this.interval=interval;
+		this.initialDelay=0;
+		toEnd=true;
+	}
+	
+	public void setDelayedInterval(long interval, long delay) {
+		this.interval=interval;
+		this.initialDelay=delay;
 		toEnd=true;
 	}
 	
@@ -41,7 +58,7 @@ public abstract class VariableTimer {
 			@Override
 			public void run() {
 				if(toEnd) {
-					setInterval(interval);
+					setInterval(interval, initialDelay);
 					toEnd=false;
 				}
 				else {
@@ -54,7 +71,7 @@ public abstract class VariableTimer {
 	public abstract void task();
 	
 	private void setScheduler() {
-		scheduler.scheduleAtFixedRate(instantRunnable(), 0, interval, TimeUnit.MILLISECONDS);
+		scheduler.scheduleAtFixedRate(instantRunnable(), initialDelay * 1000000, interval * 1000000, TimeUnit.NANOSECONDS);
 	}
 	
 }
