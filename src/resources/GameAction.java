@@ -16,12 +16,12 @@ public abstract class GameAction implements KeyListener {
 
 	abstract void releaseTask();
 
-	protected GameAction(int keyCode) {
+	public GameAction(int keyCode) {
 		actionKeys = new ArrayList<>();
 		actionKeys.add(keyCode);
 	}
 
-	protected GameAction(List<Integer> actionKeys) {
+	public GameAction(List<Integer> actionKeys) {
 		this.actionKeys = actionKeys;
 	}
 

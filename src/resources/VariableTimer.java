@@ -11,12 +11,12 @@ public abstract class VariableTimer {
 	private long interval=1000;
 	private long initialDelay = 0;
 	
-	protected VariableTimer(long interval) {
+	public VariableTimer(long interval) {
 		this.interval=interval;
 		setScheduler();
 	}
 	
-	protected VariableTimer() {
+	public VariableTimer() {
 		
 	}
 	
