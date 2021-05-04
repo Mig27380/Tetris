@@ -7,18 +7,11 @@ public class Tile {
 	@Getter private int relativeX;
 	@Getter private int relativeY;
 	@Getter @Setter private int value = 0;
-	@Getter private int centerX = 0;
-	@Getter private int centerY = 0;
 	
 
 	public Tile(int x, int y) {
 		this.relativeX = x;
 		this.relativeY = y;
-	}
-
-	public void setCenter(int x, int y) {
-		this.centerX = x;
-		this.centerY = y;
 	}
 	
 	public void setCoordinates(int x, int y) {

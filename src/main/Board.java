@@ -1,5 +1,7 @@
 package main;
 
+import java.util.Arrays;
+
 import lombok.Getter;
 
 public class Board {
@@ -12,11 +14,15 @@ public class Board {
 	}
 	
 	public boolean isPosEmpty(int x, int y) {
-		return board[y][x] == 0;
+		try {
+			return board[y][x] == 0;
+		} catch(ArrayIndexOutOfBoundsException e) {
+			return false;
+		}
 	}
 	
 	public boolean isInBounds(int x, int y) {
-		return (x>=0 && x<=BOARD_WIDTH) && (y>=0 && y<=BOARD_WIDTH);
+		return (x>=0 && x<BOARD_WIDTH) && (y>=0 && y<BOARD_HEIGHT);
 	}
 	
 	public void paintPos(int x, int y, int value) {
@@ -27,7 +33,7 @@ public class Board {
 	
 	private boolean checkRow(int height) {
 		for(int i:board[height]) {
-			if(i!=0) {
+			if(i==0) {
 				return false;
 			}
 		}
@@ -61,9 +67,7 @@ public class Board {
 	
 	private void cleanBoard() {
 		for(int i=0; i<BOARD_HEIGHT; i++) {
-			for(int ii=0; ii<BOARD_WIDTH; ii++) {
-				board[i][ii]=0;
-			}
+			Arrays.fill(board[i], 0);
 		}
 	}
 	

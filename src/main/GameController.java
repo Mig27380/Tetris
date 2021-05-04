@@ -13,7 +13,8 @@ public class GameController {
 	private static final int MAX_LVL = 29;
 	private static final int MAX_VSBLLINES = 5;
 
-	private int visibleUpcomingPieces = 0;
+	public static int visibleUpcomingPieces = 0;
+	private boolean canSave = true;
 	@Getter private int level = 1;
 	@Getter private int score = 0;
 	@Getter private int lines = 0;
@@ -21,15 +22,25 @@ public class GameController {
 	private Board board = new Board();
 	private Piece currentPiece;
 	private Piece savedPiece;
+	private GUI gui;
 	private List<Piece> piecesPool = new ArrayList<>();
 
 	public GameController(int level, int visibleUpcomingPieces) {
 		this.level = level < 1 ? 1 : level > MAX_LVL ? MAX_LVL : level;
-		this.visibleUpcomingPieces = visibleUpcomingPieces < 0 ? 0 : visibleUpcomingPieces > MAX_VSBLLINES ? MAX_VSBLLINES : visibleUpcomingPieces;
+		GameController.visibleUpcomingPieces = visibleUpcomingPieces < 0 ? 0 : visibleUpcomingPieces > MAX_VSBLLINES ? MAX_VSBLLINES : visibleUpcomingPieces;
+		generateUpcomingPieces();
+		nextPiece();
+		savedPiece = new Piece();
+		savedPiece.setPieceType(-1);
+		this.gui = new GUI(board, savedPiece.getPieceType(), piecesPool, visibleUpcomingPieces);
 	}
-
-	public void paint(Board board) {
-		
+	
+	public void paint() {
+		gui.setBoard(board);
+		gui.setPiecesPool(piecesPool, visibleUpcomingPieces);
+		gui.setSavedPiece(savedPiece);
+		gui.setPiece(currentPiece);
+		gui.repaint();
 	}
 
 	public void leavePiece() {
@@ -38,16 +49,15 @@ public class GameController {
 		}
 		nextPiece();
 		board.checkRows();
-		paint(board);
+		paint();
+		canSave = true;
 	}
 
-	private Piece nextPiece() {
-		Piece toUse = piecesPool.get(0);
-		piecesPool.remove(0);
+	private void nextPiece() {
+		currentPiece = piecesPool.remove(0);
 		if (piecesPool.size() - 1 < visibleUpcomingPieces) {
 			generateUpcomingPieces();
 		}
-		return toUse;
 	}
 
 	private void generateUpcomingPieces() {
@@ -64,18 +74,23 @@ public class GameController {
 	}
 
 	public void savePieces() {
-		if (savedPiece != null) {
-			Piece auxiliary = getNewPieceOfType(savedPiece);
-			savedPiece = getNewPieceOfType(currentPiece);
-			currentPiece = auxiliary;
-		} else {
-			savedPiece = getNewPieceOfType(currentPiece);
-			nextPiece();
+		if(canSave) {
+			if (savedPiece.getPieceType() != -1) {
+				Piece auxiliary = getNewPieceOfType(savedPiece);
+				savedPiece = getNewPieceOfType(currentPiece);
+				currentPiece = auxiliary;
+			} else {
+				savedPiece = getNewPieceOfType(currentPiece);
+				nextPiece();
+			}
+			canSave = false;
 		}
 	}
 
 	public void addLines(int n) {
+		int lastLinesNumber = lines;
 		lines += n;
+		if(lastLinesNumber % 10 < lines % 10) levelUp();
 	}
 	
 	public void levelUp() {

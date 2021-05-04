@@ -3,7 +3,7 @@ package main;
 import lombok.Getter;
 
 public enum OffsetData {
-	JSLTZ_OFFSET(new int[][][] {
+	JLSTZ_OFFSET(new int[][][] {
 		{{0, 0}, {0, 0}, {0, 0}, {0, 0}},
 		{{0, 0}, {1, 0}, {0, 0}, {-1, 0}},
 		{{0, 0}, {1, -1}, {0, 0}, {-1, -1}},

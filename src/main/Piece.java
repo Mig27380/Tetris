@@ -12,7 +12,7 @@ public class Piece {
 	@Getter @Setter private int pieceType = 0;
 
 	public static final int INITIAL_X = Board.BOARD_WIDTH / 2;
-	public static final int INITIAL_Y = Board.BOARD_HEIGHT - 2;
+	public static final int INITIAL_Y = Board.BOARD_HEIGHT-2;
 
 	public Piece() {
 		initializePiece();
@@ -41,7 +41,7 @@ public class Piece {
 			int[][][] currentOffsetData;
 			
 			if(this.pieceType > 1) {
-				currentOffsetData = OffsetData.JSLTZ_OFFSET.getOffsetData();
+				currentOffsetData = OffsetData.JLSTZ_OFFSET.getOffsetData();
 			}
 			else {
 				currentOffsetData = OffsetData.I_OFFSET.getOffsetData();
@@ -53,8 +53,8 @@ public class Piece {
 				for(int i=0; i<endOffset.length; i++) {
 					endOffset[i] = offsetVal1[i] - offsetVal2[i];
 				}
-				if(canMovePiece(board, endOffset[0] + x, endOffset[1] + y)) {
-					movePiece(board, endOffset[0] + x, endOffset[1] + y);
+				if(canMovePiece(board, endOffset[0], endOffset[1])) {
+					movePiece(board, endOffset[0], endOffset[1]);
 					return true;
 				}
 			}
@@ -68,7 +68,7 @@ public class Piece {
 			rotation++;
 		else
 			rotation--;
-		rotation = rotation>4 ? 0 : (rotation<1 ? 4 : rotation);
+		rotation = rotation>3 ? 0 : (rotation<0 ? 3 : rotation);
 //		if (rotation > 4)
 //			rotation = 0;
 //		else if (rotation < 1)
@@ -100,15 +100,17 @@ public class Piece {
 	
 	public boolean canMovePiece(Board board, int xMovement, int yMovement) {
 		for (Tile t : tiles) {
-			if (!t.canMoveTile(board, xMovement + x, yMovement + y)) return false;
+			if (!t.canMoveTile(board, xMovement + x, yMovement + y))
+				return false;
 		}
 		return true;
 	}
 	
-	public void movePiece(Board board, int xMovement, int yMovement) {
-		if(!canMovePiece(board, xMovement, yMovement)) return;
+	public boolean movePiece(Board board, int xMovement, int yMovement) {
+		if(!canMovePiece(board, xMovement, yMovement)) return false;
 		x+=xMovement;
 		y+=yMovement;
+		return true;
 	}
 
 }
