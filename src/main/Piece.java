@@ -11,13 +11,14 @@ public class Piece {
 	@Getter private int pieceType = 0;
 
 	public static final int INITIAL_X = Board.BOARD_WIDTH / 2;
-	public static final int INITIAL_Y = Board.BOARD_HEIGHT-5;
+	public static final int INITIAL_Y = Board.BOARD_HEIGHT-2;
 
 	public Piece() {
 		initializePiece();
+		tiles = new Tile[4];
 	}
 
-	public void rotate(Board board, boolean clockwise) {
+	public boolean rotate(Board board, boolean clockwise) {
 		if (this.pieceType!=0) {
 			int oldRotation = rotation;
 			rotation = calculateRotation(clockwise);
@@ -29,8 +30,11 @@ public class Piece {
 					tile.rotateTile(!clockwise);
 				}
 				rotation = calculateRotation(!clockwise);
+				return false;
 			}
+			return true;
 		}
+		return false;
 	}
 	
 	public boolean offset(Board board, int oldRotation, int newRotation) {
@@ -82,8 +86,9 @@ public class Piece {
 	public void initializePiece() {
 		x = INITIAL_X;
 		y = INITIAL_Y;
-		rotation = 0;
-		tiles = new Tile[4];
+		while(rotation != 0) {
+			rotate(new Board(), true);
+		}
 	}
 
 	public void setTiles(Tile tile1, Tile tile2, Tile tile3, Tile tile4) {
@@ -105,13 +110,16 @@ public class Piece {
 		if(!canMovePiece(board, xMovement, yMovement)) return false;
 		x+=xMovement;
 		y+=yMovement;
-		System.out.println("New x: " + x + " - New y: " + y);
 		return true;
 	}
 	
 	public void setPieceType(int n) {
 		this.pieceType = n;
 		if(n == 1) x--;
+	}
+	
+	public Tile getTile(int n) {
+		return tiles[n];
 	}
 
 }

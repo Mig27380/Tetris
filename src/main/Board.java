@@ -29,38 +29,40 @@ public class Board {
 		}
 	}
 	
-	private boolean checkRow(int height) {
-		for(int i:board[height]) {
-			if(i==0) {
+	private boolean isRowFull(int height) {
+		for(int i=0; i<board.length; i++) {
+			if(isPosEmpty(i, height)) {
 				return false;
 			}
 		}
 		return true;
 	}
 	
-	private int[] getRow(int height) {
-		int[] row= new int[BOARD_WIDTH];
-		for(int i=0; i<row.length; i++) {
-			row[i] = board[height][i];
-		}
-		return row;
-	}
-	
 	private void cleanRow(int height) {
-		for(int i=BOARD_HEIGHT-2; i>=height; i--) {
-			board[i] = getRow(i+1); 
+		for(int i=height; i<board.length - 1; i++) {
+			board[i] = board[i+1].clone();
 		}
 	}
 	
 	public int checkRows() {
 		int lineCount = 0;
 		for(int i=0; i<BOARD_HEIGHT; i++) {
-			if(checkRow(i)) {
+			if(isRowFull(i)) {
 				cleanRow(i);
 				lineCount++;
 			}
 		}
 		return lineCount;
+	}
+	
+	public int cleanLines() {
+		int lineCount;
+		int totalLineCount = 0;
+		do {
+			lineCount = checkRows();
+			totalLineCount += lineCount;
+		} while(lineCount>0);
+		return totalLineCount;
 	}
 	
 	public int[][] getBoard(){

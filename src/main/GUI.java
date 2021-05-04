@@ -8,10 +8,8 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import lombok.Getter;
 import lombok.Setter;
 
-@Getter
 public class GUI extends JFrame {
 	private static final long serialVersionUID = 6627266978304465915L;
 	private short spacing = 1;
@@ -26,6 +24,9 @@ public class GUI extends JFrame {
 	private Piece piece;
 	private int savedPiece;
 	private int[] piecesPool = new int[] {0};
+	@Setter private int level = 1;
+	@Setter private int score = 0;
+	@Setter private int lines = 0;
 	
 	public GUI(Board board, Piece currentPiece, int savedPiece, List<Piece> pieces, int quantity) {
 		setSize(windowX, windowY);
@@ -60,33 +61,32 @@ public class GUI extends JFrame {
 		private static final long serialVersionUID = 2344517835321478570L;
 
 		public void paintComponent(Graphics g) {
+			setTitle("Tetris® - Score: " + score + " - Lines: " + lines + " - Level: " + level);
 			setExternalElements(g);
 			paintIndicators(g);
-			paintBoard(g, board.getBoard());
-			paintBoard(g, setPieceMap());
+			paintBoard(g, board.getBoard().clone(), true);
+			paintBoard(g, setPieceMap(), false);
 		}
 		
-		private void paintBoard(Graphics g, int[][] board) {
+		private void paintBoard(Graphics g, int[][] board, boolean paintEmpty) {
 			int[][] map = board.clone();
 			for(int i=2; i<map.length; i++) {
 				for(int j=0; j<map[i].length; j++) {
-					if(map[map.length - i - 1][j]==2) g.setColor(Color.decode("#10d4f1"));
-					else if(map[map.length - i - 1][j]==1) g.setColor(Color.decode("#f7ff15"));
-					else if(map[map.length - i - 1][j]==3) g.setColor(Color.decode("#de09f1"));
-					else if(map[map.length - i - 1][j]==4) g.setColor(Color.decode("#00d900"));
-					else if(map[map.length - i - 1][j]==5) g.setColor(Color.decode("#dc1907"));
-					else if(map[map.length - i - 1][j]==6) g.setColor(Color.decode("#e7b314"));
-					else if(map[map.length - i - 1][j]==7) g.setColor(Color.decode("#1763ed"));
-					else g.setColor(Color.darkGray);
-					
-					g.fillRect(gridOffsetX+spacing*j+cellSize*j, gridOffsetY+spacing*(i-2)+cellSize*(i-2), cellSize, cellSize);
+					if(map[map.length - i - 1][j]==1) {g.setColor(Color.decode("#f7ff15")); g.fillRect(gridOffsetX+spacing*j+cellSize*j, gridOffsetY+spacing*(i-2)+cellSize*(i-2), cellSize, cellSize);}
+					else if(map[map.length - i - 1][j]==2) {g.setColor(Color.decode("#10d4f1")); g.fillRect(gridOffsetX+spacing*j+cellSize*j, gridOffsetY+spacing*(i-2)+cellSize*(i-2), cellSize, cellSize);}
+					else if(map[map.length - i - 1][j]==3) {g.setColor(Color.decode("#de09f1")); g.fillRect(gridOffsetX+spacing*j+cellSize*j, gridOffsetY+spacing*(i-2)+cellSize*(i-2), cellSize, cellSize);}
+					else if(map[map.length - i - 1][j]==4) {g.setColor(Color.decode("#00d900")); g.fillRect(gridOffsetX+spacing*j+cellSize*j, gridOffsetY+spacing*(i-2)+cellSize*(i-2), cellSize, cellSize);}
+					else if(map[map.length - i - 1][j]==5) {g.setColor(Color.decode("#dc1907")); g.fillRect(gridOffsetX+spacing*j+cellSize*j, gridOffsetY+spacing*(i-2)+cellSize*(i-2), cellSize, cellSize);}
+					else if(map[map.length - i - 1][j]==6) {g.setColor(Color.decode("#e7b314")); g.fillRect(gridOffsetX+spacing*j+cellSize*j, gridOffsetY+spacing*(i-2)+cellSize*(i-2), cellSize, cellSize);}
+					else if(map[map.length - i - 1][j]==7) {g.setColor(Color.decode("#1763ed")); g.fillRect(gridOffsetX+spacing*j+cellSize*j, gridOffsetY+spacing*(i-2)+cellSize*(i-2), cellSize, cellSize);}
+					else if(paintEmpty) {g.setColor(Color.darkGray); g.fillRect(gridOffsetX+spacing*j+cellSize*j, gridOffsetY+spacing*(i-2)+cellSize*(i-2), cellSize, cellSize);}
 				}
 			}
 		}
 		
 		private int[][] setPieceMap() {
 			Board board = new Board();
-			int map[][] = board.getBoard();
+			int map[][] = board.getBoard().clone();
 			for(Tile tile:piece.getTiles()) {
 				map[tile.getRelativeY() + piece.getY()][tile.getRelativeX() + piece.getX()] = tile.getValue();
 			}

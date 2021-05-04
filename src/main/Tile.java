@@ -3,10 +3,11 @@ package main;
 import lombok.Getter;
 import lombok.Setter;
 
+@Getter
 public class Tile {
-	@Getter private int relativeX;
-	@Getter private int relativeY;
-	@Getter @Setter private int value = 0;
+	private int relativeX;
+	private int relativeY;
+	@Setter private int value = 0;
 	
 
 	public Tile(int x, int y) {

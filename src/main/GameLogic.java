@@ -14,12 +14,16 @@ public class GameLogic {
 	public static final int INITIAL_Y = Board.BOARD_HEIGHT - 2;
 	private static final int MAX_LVL = 29;
 	private static final int MAX_VSBLLINES = 5;
+	private static final int[] SCORE_PER_LINES = {40, 100, 300, 1200};
+	private static final int SCORE_FOR_SOFTDROP = 20;
+	private static final int SCORE_FOR_HARDDROP = 40;
 
 	public static int visibleUpcomingPieces = 0;
 	private boolean canSave = true;
 	@Getter private int level = 1;
 	@Getter private int score = 0;
 	@Getter private int lines = 0;
+	protected int cyclesOnGround = 0;
 
 	private Board board = new Board();
 	private Piece currentPiece;
@@ -38,8 +42,25 @@ public class GameLogic {
 		this.gui = new GUI(board, currentPiece, savedPiece.getPieceType(), piecesPool, visibleUpcomingPieces);
 	}
 	
-	public boolean moveDown() {
+	public boolean moveDown(boolean isSoftDrop) {
 		boolean didItMove = currentPiece.movePiece(board, 0, -1);
+		if(didItMove && isSoftDrop) {
+			increaseScore(SCORE_FOR_SOFTDROP);
+		}
+		paint();
+		return didItMove;
+	}
+	
+	public boolean moveLeft() {
+		boolean didItMove = currentPiece.movePiece(board, -1, 0);
+		if(didItMove) cyclesOnGround--;
+		paint();
+		return didItMove;
+	}
+	
+	public boolean moveRight() {
+		boolean didItMove = currentPiece.movePiece(board, 1, 0);
+		if(didItMove) cyclesOnGround--;
 		paint();
 		return didItMove;
 	}
@@ -53,26 +74,40 @@ public class GameLogic {
 		}
 	}
 	
+	public boolean rotate(boolean clockwise) {
+		boolean didItRotate = currentPiece.rotate(board, clockwise);
+		if(didItRotate) cyclesOnGround--;
+		paint();
+		return didItRotate;
+	}
+	
 	public void paint() {
 		gui.setBoard(board);
 		gui.setPiecesPool(piecesPool, visibleUpcomingPieces);
 		gui.setSavedPiece(savedPiece);
 		gui.setPiece(currentPiece);
+		gui.setLevel(level);
+		gui.setLines(lines);
+		gui.setScore(score);
 		gui.repaint();
 	}
 
-	public void leavePiece() {
+	public int leavePiece() {
+		int lines;
 		for (Tile tile : currentPiece.getTiles()) {
 			board.paintPos(currentPiece.getTileAbsoluteX(tile), currentPiece.getTileAbsoluteY(tile), tile.getValue());
 		}
 		nextPiece();
-		board.checkRows();
+		lines = board.cleanLines();
 		paint();
 		canSave = true;
+		return lines;
 	}
 
 	private void nextPiece() {
-		currentPiece = piecesPool.remove(0);
+		Piece piece = piecesPool.remove(0);
+		piece.initializePiece();
+		currentPiece = piece;
 		if (piecesPool.size() - 1 < visibleUpcomingPieces) {
 			generateUpcomingPieces();
 		}
@@ -80,34 +115,39 @@ public class GameLogic {
 
 	private void generateUpcomingPieces() {
 		List<Piece> pieces = new ArrayList<>();
-		for (PiecesList p : PiecesList.values()) {
-			pieces.add(p.getPiece());
+		for (int i=0; i<7; i++) {
+			Piece piece = getNewPieceOfType(i);
+			piece.initializePiece();
+			pieces.add(piece);
 		}
 		Collections.shuffle(pieces);
 		piecesPool.addAll(pieces);
 	}
 	
-	private Piece getNewPieceOfType(Piece piece) {
-		return PiecesList.values()[piece.getPieceType()].getPiece();
+	private Piece getNewPieceOfType(int n) {
+		return PiecesList.values()[n].getPiece();
 	}
 
 	public void savePieces() {
 		if(canSave) {
 			if (savedPiece.getPieceType() != -1) {
-				Piece auxiliary = getNewPieceOfType(savedPiece);
-				savedPiece = getNewPieceOfType(currentPiece);
+				Piece auxiliary = getNewPieceOfType(savedPiece.getPieceType());
+				savedPiece = getNewPieceOfType(currentPiece.getPieceType());
 				currentPiece = auxiliary;
 			} else {
-				savedPiece = getNewPieceOfType(currentPiece);
+				savedPiece = getNewPieceOfType(currentPiece.getPieceType());
 				nextPiece();
 			}
+			paint();
 			canSave = false;
 		}
 	}
 	
 	public void dropDown() {
-		while(currentPiece.movePiece(board, 0, -1));
-		leavePiece();
+		while(currentPiece.movePiece(board, 0, -1)) {
+			increaseScore(SCORE_FOR_HARDDROP);
+		}
+		addLines(leavePiece());
 	}
 	
 	public void increaseScore(int n) {
@@ -116,8 +156,9 @@ public class GameLogic {
 	
 	public void addLines(int n) {
 		int lastLinesNumber = lines;
+		if(n>0) increaseScore(SCORE_PER_LINES[n-1] * level);
 		lines += n;
-		if(lastLinesNumber % 10 < lines % 10) levelUp();
+		if(lastLinesNumber / 10 < lines / 10) levelUp();
 	}
 	
 	public void levelUp() {
