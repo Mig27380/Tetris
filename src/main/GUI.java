@@ -85,7 +85,7 @@ public class GUI extends JFrame {
 		}
 		
 		private int[][] setPieceMap() {
-			new Board();
+			Board board = new Board();
 			int map[][] = board.getBoard();
 			for(Tile tile:piece.getTiles()) {
 				map[tile.getRelativeY() + piece.getY()][tile.getRelativeX() + piece.getX()] = tile.getValue();
