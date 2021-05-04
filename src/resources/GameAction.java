@@ -12,9 +12,9 @@ public abstract class GameAction implements KeyListener {
 	private List<Integer> pressedKeys = new ArrayList<>();
 	private final List<Integer> actionKeys;
 
-	abstract void pressTask();
+	public abstract void pressTask();
 
-	abstract void releaseTask();
+	public abstract void releaseTask();
 
 	public GameAction(int keyCode) {
 		actionKeys = new ArrayList<>();

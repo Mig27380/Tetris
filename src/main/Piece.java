@@ -5,13 +5,13 @@ import lombok.Getter;
 public class Piece {
 
 	@Getter private Tile[] tiles;
-	private int x;
-	private int y;
+	@Getter private int x;
+	@Getter private int y;
 	private int rotation = 0;
 	@Getter private int pieceType = 0;
 
 	public static final int INITIAL_X = Board.BOARD_WIDTH / 2;
-	public static final int INITIAL_Y = Board.BOARD_HEIGHT-2;
+	public static final int INITIAL_Y = Board.BOARD_HEIGHT-5;
 
 	public Piece() {
 		initializePiece();
@@ -105,6 +105,7 @@ public class Piece {
 		if(!canMovePiece(board, xMovement, yMovement)) return false;
 		x+=xMovement;
 		y+=yMovement;
+		System.out.println("New x: " + x + " - New y: " + y);
 		return true;
 	}
 	

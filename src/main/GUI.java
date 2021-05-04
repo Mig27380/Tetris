@@ -27,14 +27,12 @@ public class GUI extends JFrame {
 	private int savedPiece;
 	private int[] piecesPool = new int[] {0};
 	
-	public GUI(Board board, int savedPiece, List<Piece> pieces, int quantity) {
+	public GUI(Board board, Piece currentPiece, int savedPiece, List<Piece> pieces, int quantity) {
 		setSize(windowX, windowY);
 		setTitle("Tetris®");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
 		setResizable(false);
-
-		add(new BoardView());
 		
 		this.board = board;
 		piecesPool = new int[quantity];
@@ -42,7 +40,9 @@ public class GUI extends JFrame {
 			piecesPool[i] = pieces.get(i).getPieceType();
 		}
 		this.savedPiece = savedPiece;
+		this.piece = currentPiece;
 		
+		add(new BoardView());
 	}
 
 	public void setPiecesPool(List<Piece> pieces, int quantity) {
@@ -62,11 +62,12 @@ public class GUI extends JFrame {
 		public void paintComponent(Graphics g) {
 			setExternalElements(g);
 			paintIndicators(g);
-			paintBoard(g);
+			paintBoard(g, board.getBoard());
+			paintBoard(g, setPieceMap());
 		}
 		
-		private void paintBoard(Graphics g) {
-			int[][] map = board.getBoard();
+		private void paintBoard(Graphics g, int[][] board) {
+			int[][] map = board.clone();
 			for(int i=2; i<map.length; i++) {
 				for(int j=0; j<map[i].length; j++) {
 					if(map[map.length - i - 1][j]==2) g.setColor(Color.decode("#10d4f1"));
@@ -81,6 +82,15 @@ public class GUI extends JFrame {
 					g.fillRect(gridOffsetX+spacing*j+cellSize*j, gridOffsetY+spacing*(i-2)+cellSize*(i-2), cellSize, cellSize);
 				}
 			}
+		}
+		
+		private int[][] setPieceMap() {
+			new Board();
+			int map[][] = board.getBoard();
+			for(Tile tile:piece.getTiles()) {
+				map[tile.getRelativeY() + piece.getY()][tile.getRelativeX() + piece.getX()] = tile.getValue();
+			}
+			return map;
 		}
 
 		private void setExternalElements(Graphics g) {

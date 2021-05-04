@@ -2,12 +2,10 @@ package main;
 
 import java.util.Arrays;
 
-import lombok.Getter;
-
 public class Board {
 	public static final int BOARD_WIDTH = 10;
 	public static final int BOARD_HEIGHT = 22;
-	@Getter private int[][] board = new int[BOARD_HEIGHT][BOARD_WIDTH];
+	private int[][] board = new int[BOARD_HEIGHT][BOARD_WIDTH];
 	
 	public Board() {
 		cleanBoard();
@@ -63,6 +61,10 @@ public class Board {
 			}
 		}
 		return lineCount;
+	}
+	
+	public int[][] getBoard(){
+		return this.board.clone();
 	}
 	
 	private void cleanBoard() {
