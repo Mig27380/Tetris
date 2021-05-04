@@ -6,8 +6,8 @@ public enum PiecesList {
 	T(new Tile(-1, 0), new Tile(0, 0), new Tile(0, 1), new Tile(1, 0)),
 	S(new Tile(-1, 0), new Tile(0, 0), new Tile(0, 1), new Tile(1, 1)),
 	Z(new Tile(-1, 1), new Tile(0, 1), new Tile(0, 0), new Tile(1, 0)),
-	J(new Tile(-1, 1), new Tile(-1, 0), new Tile(0, 0), new Tile(1, 0)),
-	L(new Tile(-1, 0), new Tile(0, 0), new Tile(1, 0), new Tile(1, 1));
+	L(new Tile(-1, 0), new Tile(0, 0), new Tile(1, 0), new Tile(1, 1)),
+	J(new Tile(-1, 1), new Tile(-1, 0), new Tile(0, 0), new Tile(1, 0));
 
 	private Piece piece = new Piece();
 

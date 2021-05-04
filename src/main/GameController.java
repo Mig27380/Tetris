@@ -1,10 +1,12 @@
 package main;
 
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import lombok.Getter;
+import resources.GameAction;
 
 public class GameController {
 
@@ -33,6 +35,15 @@ public class GameController {
 		savedPiece = new Piece();
 		savedPiece.setPieceType(-1);
 		this.gui = new GUI(board, savedPiece.getPieceType(), piecesPool, visibleUpcomingPieces);
+	}
+	
+	public void setControls(List<GameAction> controls) {
+		for(KeyListener listener:gui.getKeyListeners()) {
+			gui.removeKeyListener(listener);
+		}
+		for(GameAction action:controls) {
+			gui.addKeyListener(action);
+		}
 	}
 	
 	public void paint() {
@@ -86,7 +97,16 @@ public class GameController {
 			canSave = false;
 		}
 	}
-
+	
+	public void dropDown() {
+		while(currentPiece.movePiece(board, 0, -1));
+		leavePiece();
+	}
+	
+	public void increaseScore(int n) {
+		score += n;
+	}
+	
 	public void addLines(int n) {
 		int lastLinesNumber = lines;
 		lines += n;

@@ -1,7 +1,6 @@
 package main;
 
 import lombok.Getter;
-import lombok.Setter;
 
 public class Piece {
 
@@ -9,7 +8,7 @@ public class Piece {
 	private int x;
 	private int y;
 	private int rotation = 0;
-	@Getter @Setter private int pieceType = 0;
+	@Getter private int pieceType = 0;
 
 	public static final int INITIAL_X = Board.BOARD_WIDTH / 2;
 	public static final int INITIAL_Y = Board.BOARD_HEIGHT-2;
@@ -69,10 +68,6 @@ public class Piece {
 		else
 			rotation--;
 		rotation = rotation>3 ? 0 : (rotation<0 ? 3 : rotation);
-//		if (rotation > 4)
-//			rotation = 0;
-//		else if (rotation < 1)
-//			rotation = 4;
 		return rotation;
 	}
 
@@ -111,6 +106,11 @@ public class Piece {
 		x+=xMovement;
 		y+=yMovement;
 		return true;
+	}
+	
+	public void setPieceType(int n) {
+		this.pieceType = n;
+		if(n == 1) x--;
 	}
 
 }

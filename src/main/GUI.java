@@ -69,14 +69,13 @@ public class GUI extends JFrame {
 			int[][] map = board.getBoard();
 			for(int i=2; i<map.length; i++) {
 				for(int j=0; j<map[i].length; j++) {
-					
-					if(map[map.length - i][j]==2) g.setColor(Color.decode("#10d4f1"));
-					else if(map[map.length - i][j]==1) g.setColor(Color.decode("#f7ff15"));
-					else if(map[map.length - i][j]==3) g.setColor(Color.decode("#de09f1"));
-					else if(map[map.length - i][j]==4) g.setColor(Color.decode("#00d900"));
-					else if(map[map.length - i][j]==5) g.setColor(Color.decode("#dc1907"));
-					else if(map[map.length - i][j]==6) g.setColor(Color.decode("#e7b314"));
-					else if(map[map.length - i][j]==7) g.setColor(Color.decode("#1763ed"));
+					if(map[map.length - i - 1][j]==2) g.setColor(Color.decode("#10d4f1"));
+					else if(map[map.length - i - 1][j]==1) g.setColor(Color.decode("#f7ff15"));
+					else if(map[map.length - i - 1][j]==3) g.setColor(Color.decode("#de09f1"));
+					else if(map[map.length - i - 1][j]==4) g.setColor(Color.decode("#00d900"));
+					else if(map[map.length - i - 1][j]==5) g.setColor(Color.decode("#dc1907"));
+					else if(map[map.length - i - 1][j]==6) g.setColor(Color.decode("#e7b314"));
+					else if(map[map.length - i - 1][j]==7) g.setColor(Color.decode("#1763ed"));
 					else g.setColor(Color.darkGray);
 					
 					g.fillRect(gridOffsetX+spacing*j+cellSize*j, gridOffsetY+spacing*(i-2)+cellSize*(i-2), cellSize, cellSize);
