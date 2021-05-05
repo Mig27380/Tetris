@@ -25,10 +25,10 @@ public class GameLogic {
 	@Getter private int lines = 0;
 	protected int cyclesOnGround = 0;
 
-	private Board board = new Board();
+	@Getter private Board board = new Board();
 	private Piece currentPiece;
 	private Piece savedPiece;
-	private GUI gui;
+	@Getter private GUI gui;
 	private List<Piece> piecesPool = new ArrayList<>();
 	@Getter private List<GameAction> controls = new ArrayList<>();
 
@@ -96,6 +96,7 @@ public class GameLogic {
 		int lines;
 		for (Tile tile : currentPiece.getTiles()) {
 			board.paintPos(currentPiece.getTileAbsoluteX(tile), currentPiece.getTileAbsoluteY(tile), tile.getValue());
+			if(currentPiece.getTileAbsoluteY(tile) >= 19) gameOver();
 		}
 		nextPiece();
 		lines = board.cleanLines();
@@ -163,6 +164,10 @@ public class GameLogic {
 	
 	public void levelUp() {
 		level++;
+	}
+
+	public void gameOver() {
+		
 	}
 	
 }

@@ -7,10 +7,6 @@ public class Board {
 	public static final int BOARD_HEIGHT = 22;
 	private int[][] board = new int[BOARD_HEIGHT][BOARD_WIDTH];
 	
-	public Board() {
-		cleanBoard();
-	}
-	
 	public boolean isPosEmpty(int x, int y) {
 		try {
 			return board[y][x] == 0;
@@ -69,9 +65,17 @@ public class Board {
 		return this.board.clone();
 	}
 	
-	private void cleanBoard() {
+	public void fillBoard(int n) {
 		for(int i=0; i<BOARD_HEIGHT; i++) {
-			Arrays.fill(board[i], 0);
+			Arrays.fill(board[i], n);
+		}
+	}
+	
+	public void paintAllPieces(int n) {
+		for(int i=0; i<board.length; i++) {
+			for(int j=0; j<board[i].length; j++) {
+				if(!isPosEmpty(j, i)) board[i][j] = n;
+			}
 		}
 	}
 	

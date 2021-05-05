@@ -17,6 +17,7 @@ public class GUI extends JFrame {
 	private short gridOffsetX = 12;
 	private short gridOffsetY = 12;
 	private int windowX = 580, windowY = 702;
+	private boolean isGameOver = false;
 
 	@Setter
 	private Board board;
@@ -45,6 +46,10 @@ public class GUI extends JFrame {
 		
 		add(new BoardView());
 	}
+	
+	public void gameOver() {
+		isGameOver = true;
+	}
 
 	public void setPiecesPool(List<Piece> pieces, int quantity) {
 		piecesPool = new int[quantity];
@@ -65,7 +70,7 @@ public class GUI extends JFrame {
 			setExternalElements(g);
 			paintIndicators(g);
 			paintBoard(g, board.getBoard().clone(), true);
-			paintBoard(g, setPieceMap(), false);
+			if(!isGameOver) paintBoard(g, setPieceMap(), false);
 		}
 		
 		private void paintBoard(Graphics g, int[][] board, boolean paintEmpty) {
@@ -79,6 +84,7 @@ public class GUI extends JFrame {
 					else if(map[map.length - i - 1][j]==5) {g.setColor(Color.decode("#dc1907")); g.fillRect(gridOffsetX+spacing*j+cellSize*j, gridOffsetY+spacing*(i-2)+cellSize*(i-2), cellSize, cellSize);}
 					else if(map[map.length - i - 1][j]==6) {g.setColor(Color.decode("#e7b314")); g.fillRect(gridOffsetX+spacing*j+cellSize*j, gridOffsetY+spacing*(i-2)+cellSize*(i-2), cellSize, cellSize);}
 					else if(map[map.length - i - 1][j]==7) {g.setColor(Color.decode("#1763ed")); g.fillRect(gridOffsetX+spacing*j+cellSize*j, gridOffsetY+spacing*(i-2)+cellSize*(i-2), cellSize, cellSize);}
+					else if(map[map.length - i - 1][j]==-1) {g.setColor(Color.lightGray); g.fillRect(gridOffsetX+spacing*j+cellSize*j, gridOffsetY+spacing*(i-2)+cellSize*(i-2), cellSize, cellSize);}
 					else if(paintEmpty) {g.setColor(Color.darkGray); g.fillRect(gridOffsetX+spacing*j+cellSize*j, gridOffsetY+spacing*(i-2)+cellSize*(i-2), cellSize, cellSize);}
 				}
 			}

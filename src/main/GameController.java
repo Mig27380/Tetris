@@ -5,8 +5,8 @@ import resources.VariableTimer;
 
 public class GameController extends GameLogic {
 	
-	private static final int[] SPEED_CURVE = {900, 810, 730, 640, 580, 500, 430, 360, 300, 300, 220, 220, 220, 
-			150, 150, 150, 150, 150, 150, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 50};
+	private static final int[] SPEED_CURVE = {800, 716, 633, 640, 550, 466, 383, 300, 216, 133, 100, 83, 83, 38,
+			66, 66, 66, 50, 50, 50, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 16};
 	
 	private boolean isMovingRight = false;
 	private boolean isMovingLeft = false;
@@ -16,7 +16,7 @@ public class GameController extends GameLogic {
 		@Override
 		public void task() {
 			if(!moveDown(isSoftDropping)) {
-				if(cyclesOnGround > 4) {
+				if(cyclesOnGround > (getLevel()<6 ? 2 : getLevel()<12 ? 3 : getLevel()<16 ? 4 : 5)) {
 					leavePiece();
 				}
 				cyclesOnGround++;
@@ -37,6 +37,17 @@ public class GameController extends GameLogic {
 		new SavePiece();
 		new Exit();
 		setControls();
+	}
+	
+	@Override
+	public void gameOver() {
+		getBoard().paintAllPieces(-1);
+		getControls().clear();
+		new Exit();
+		fallTimer.stop();
+		setControls();
+		getGui().gameOver();
+		paint();
 	}
 	
 	class FallDown extends GameAction{
@@ -165,6 +176,7 @@ public class GameController extends GameLogic {
 		@Override
 		public void pressTask() {
 			rotate(false);
+			gameOver();
 		}
 
 		@Override
