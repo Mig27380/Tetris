@@ -176,7 +176,6 @@ public class GameController extends GameLogic {
 		@Override
 		public void pressTask() {
 			rotate(false);
-			gameOver();
 		}
 
 		@Override
