@@ -15,8 +15,8 @@ public class GameLogic {
 	private static final int MAX_LVL = 29;
 	private static final int MAX_VSBLLINES = 5;
 	private static final int[] SCORE_PER_LINES = {40, 100, 300, 1200};
-	private static final int SCORE_FOR_SOFTDROP = 20;
-	private static final int SCORE_FOR_HARDDROP = 40;
+	private static final int SCORE_FOR_SOFTDROP = 1;
+	private static final int SCORE_FOR_HARDDROP = 2;
 
 	public static int visibleUpcomingPieces = 0;
 	private boolean canSave = true;
