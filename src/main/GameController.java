@@ -5,14 +5,14 @@ import resources.VariableTimer;
 
 public class GameController extends GameLogic {
 	
-	private static final int[] SPEED_CURVE = {800, 716, 633, 640, 550, 466, 383, 300, 216, 133, 100, 83, 83, 38,
+	private static final int[] SPEED_CURVE = {800, 716, 633, 640, 550, 466, 383, 300, 216, 133, 100, 83, 83, 83,
 			66, 66, 66, 50, 50, 50, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 16};
 	
 	private boolean isMovingRight = false;
 	private boolean isMovingLeft = false;
 	private boolean isSoftDropping = false;
 	
-	private VariableTimer fallTimer = new VariableTimer(SPEED_CURVE[getLevel()]) {
+	private VariableTimer fallTimer = new VariableTimer(SPEED_CURVE[getLevel()] - 1) {
 		@Override
 		public void task() {
 			if(!moveDown(isSoftDropping)) {
