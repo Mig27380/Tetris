@@ -9,23 +9,52 @@ public class Tile {
 	private int relativeY;
 	@Setter private int value = 0;
 	
-
-	public Tile(int x, int y) {
-		this.relativeX = x;
-		this.relativeY = y;
+	/**
+	 * Creates the tile and sets the initial relative position to the tile's center
+	 * 
+	 * @param xCoordinate - int
+	 * @param yCoordinate - int
+	 */
+	public Tile(int xCoordinate, int yCoordinate) {
+		this.relativeX = xCoordinate;
+		this.relativeY = yCoordinate;
 	}
 	
-	private void setCoordinates(int x, int y) {
-		this.relativeX = x;
-		this.relativeY = y;
+	/**
+	 * Sets the relative coordinates of the tile to the ones specified
+	 * 
+	 * @param xCoordinate - int
+	 * @param yCoordinate - int
+	 */
+	private void setCoordinates(int xCoordinate, int yCoordinate) {
+		this.relativeX = xCoordinate;
+		this.relativeY = yCoordinate;
 	}
 	
+	/**
+	 * Checks wether a tile can be moved to a specified position within a designated board or not
+	 * 
+	 * @param board - Board
+	 * @param xMovement - int
+	 * @param yMovement - int
+	 * @return
+	 * <ul>
+	 *     <li>true - if the tile can be moved</li>
+	 *     <li>false - if the tile cannot be moved</li>
+	 * </ul>
+	 */
 	public boolean canMoveTile(Board board, int xMovement, int yMovement){
 		return board.isInBounds(xMovement + relativeX, yMovement + relativeY) && board.isPosEmpty(xMovement + relativeX, yMovement + relativeY);
 	}
 	
-	public void rotateTile(boolean clockwise) {
-		int[][] rotationMatrix = clockwise ? new int[][] {{0, -1}, {1, 0}} : new int[][] {{0, 1}, {-1, 0}};
+	
+	/**
+	 * Rotates the tile either clockwise or counterclockwise
+	 * 
+	 * @param isClockwise - boolean 
+	 */
+	public void rotateTile(boolean isClockwise) {
+		int[][] rotationMatrix = isClockwise ? new int[][] {{0, -1}, {1, 0}} : new int[][] {{0, 1}, {-1, 0}};
 		setCoordinates(rotationMatrix[0][0] * relativeX + rotationMatrix[1][0] * relativeY, rotationMatrix[0][1] * relativeX + rotationMatrix[1][1] * relativeY);
 	}
 }
