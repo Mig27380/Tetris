@@ -15,7 +15,7 @@ public class Tile {
 		this.relativeY = y;
 	}
 	
-	public void setCoordinates(int x, int y) {
+	private void setCoordinates(int x, int y) {
 		this.relativeX = x;
 		this.relativeY = y;
 	}
