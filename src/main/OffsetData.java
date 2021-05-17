@@ -2,6 +2,12 @@ package main;
 
 import lombok.Getter;
 
+/**
+ * Enum that contains all of the offset data required when rotating a piece
+ * 
+ * @author Miguel Ruiz Pryshlyak
+ *
+ */
 public enum OffsetData {
 	JLSTZ_OFFSET(new int[][][] {
 		{{0, 0}, {0, 0}, {0, 0}, {0, 0}},
@@ -20,6 +26,11 @@ public enum OffsetData {
 	
 	@Getter private int[][][] offsetData;
 	
+	/**
+	 * It just assigns the offset data to the array
+	 * 
+	 * @param offsetData
+	 */
 	private OffsetData(int[][][] offsetData) {
 		this.offsetData = offsetData;
 	}

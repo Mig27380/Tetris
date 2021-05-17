@@ -3,6 +3,12 @@ package main;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Creates every one of the tiles that will be used to form the pieces.
+ * 
+ * @author Miguel Ruiz Pryshlyak
+ *
+ */
 @Getter
 public class Tile {
 	private int relativeX;

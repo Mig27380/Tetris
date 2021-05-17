@@ -1,16 +1,23 @@
 package main;
 
+import java.awt.event.KeyListener;
+
+import lombok.Getter;
 import resources.GameAction;
 import resources.VariableTimer;
 
+/**
+ * It inherits the logic from the GameLogic class, to then add all the controls and the gui
+ * 
+ * @author Miguel Ruiz Pryshlyak
+ *
+ */
 public class GameController extends GameLogic {
-	
-	private static final int[] SPEED_CURVE = {800, 716, 633, 640, 550, 466, 383, 300, 216, 133, 100, 83, 83, 83,
-			66, 66, 66, 50, 50, 50, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 16};
 	
 	private boolean isMovingRight = false;
 	private boolean isMovingLeft = false;
 	private boolean isSoftDropping = false;
+	@Getter private GUI gui;
 	
 	private VariableTimer fallTimer = new VariableTimer(SPEED_CURVE[getLevel()] - 1) {
 		@Override
@@ -28,6 +35,7 @@ public class GameController extends GameLogic {
 
 	public GameController(int level, int visibleUpcomingPieces) {
 		super(level, visibleUpcomingPieces);
+		this.gui = new GUI(getBoard(), getCurrentPiece(), getSavedPiece().getPieceType(), getPiecesPool(), visibleUpcomingPieces);
 		new FallDown();
 		new MoveLeft();
 		new MoveRight();
@@ -47,7 +55,29 @@ public class GameController extends GameLogic {
 		fallTimer.stop();
 		setControls();
 		getGui().gameOver();
-		paint();
+		refresh();
+	}
+	
+	@Override
+	public void setControls() {
+		for(KeyListener listener:gui.getKeyListeners()) {
+			gui.removeKeyListener(listener);
+		}
+		for(GameAction action:getControls()) {
+			gui.addKeyListener(action);
+		}
+	}
+	
+	@Override
+	public void refresh() {
+		gui.setBoard(getBoard());
+		gui.setPiecesPool(getPiecesPool(), visibleUpcomingPieces);
+		gui.setSavedPiece(getSavedPiece());
+		gui.setPiece(getCurrentPiece());
+		gui.setLevel(getLevel());
+		gui.setLines(getLines());
+		gui.setScore(getScore());
+		gui.repaint();
 	}
 	
 	class FallDown extends GameAction{

@@ -1,6 +1,5 @@
 package main;
 
-import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -8,6 +7,12 @@ import java.util.List;
 import lombok.Getter;
 import resources.GameAction;
 
+/**
+ * Runs the game logic
+ * 
+ * @author Miguel Ruiz Pryshlyak
+ *
+ */
 public class GameLogic {
 
 	public static final int INITIAL_X = Board.BOARD_WIDTH / 2;
@@ -15,6 +20,8 @@ public class GameLogic {
 	private static final int MAX_LVL = 29;
 	private static final int MAX_VSBLLINES = 5;
 	private static final int[] SCORE_PER_LINES = {40, 100, 300, 1200};
+	protected static final int[] SPEED_CURVE = {800, 716, 633, 640, 550, 466, 383, 300, 216, 133, 100, 83, 83, 83,
+			66, 66, 66, 50, 50, 50, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 16};
 	private static final int SCORE_FOR_SOFTDROP = 1;
 	private static final int SCORE_FOR_HARDDROP = 2;
 
@@ -26,12 +33,18 @@ public class GameLogic {
 	protected int cyclesOnGround = 0;
 
 	@Getter private Board board = new Board();
-	private Piece currentPiece;
-	private Piece savedPiece;
-	@Getter private GUI gui;
-	private List<Piece> piecesPool = new ArrayList<>();
+	@Getter private Piece currentPiece;
+	@Getter private Piece savedPiece;
+	
+	@Getter private List<Piece> piecesPool = new ArrayList<>();
 	@Getter private List<GameAction> controls = new ArrayList<>();
 
+	/**
+	 * Generates the game, and sets the initial difficulty and the number of visible pieces
+	 * 
+	 * @param level - int
+	 * @param visibleUpcomingPieces - int
+	 */
 	public GameLogic(int level, int visibleUpcomingPieces) {
 		this.level = level < 1 ? 1 : level > MAX_LVL ? MAX_LVL : level;
 		GameLogic.visibleUpcomingPieces = visibleUpcomingPieces < 0 ? 0 : visibleUpcomingPieces > MAX_VSBLLINES ? MAX_VSBLLINES : visibleUpcomingPieces;
@@ -39,72 +52,114 @@ public class GameLogic {
 		nextPiece();
 		savedPiece = new Piece();
 		savedPiece.setPieceType(-1);
-		this.gui = new GUI(board, currentPiece, savedPiece.getPieceType(), piecesPool, visibleUpcomingPieces);
+		
 	}
 	
+	/**
+	 * Moves the piece down by 1 tile, and increases the score if using soft drop
+	 * 
+	 * @param isSoftDrop - boolean
+	 * @return
+	 * <ul>
+	 *     <li>true - if the piece moved down</li>
+	 *     <li>false - if the piece didn't move down</li>
+	 * </ul>
+	 */
 	public boolean moveDown(boolean isSoftDrop) {
 		boolean didItMove = currentPiece.movePiece(board, 0, -1);
 		if(didItMove && isSoftDrop) {
 			increaseScore(SCORE_FOR_SOFTDROP);
 		}
-		paint();
+		refresh();
 		return didItMove;
 	}
 	
+	/**
+	 * Moves the piece left by 1 tile, and refreshes the screen afterwards. It prevents pieces 
+	 * from being placed on the ground if it's used fast enough, and returns true if it was able
+	 * to move.
+	 * 
+	 * @return
+	 * <ul>
+	 *     <li>true - if the piece moved left</li>
+	 *     <li>false - if the piece didn't move left</li>
+	 * </ul>
+	 */
 	public boolean moveLeft() {
 		boolean didItMove = currentPiece.movePiece(board, -1, 0);
-		if(didItMove) cyclesOnGround--;
-		paint();
+		if(didItMove && cyclesOnGround > 0) cyclesOnGround--;
+		refresh();
 		return didItMove;
 	}
 	
+	/**
+	 * Moves the piece right by 1 tile, and refreshes the screen afterwards. It prevents pieces 
+	 * from being placed on the ground if it's used fast enough, and returns true if it was able
+	 * to move.
+	 * 
+	 * @return
+	 * <ul>
+	 *     <li>true - if the piece moved right</li>
+	 *     <li>false - if the piece didn't move right</li>
+	 * </ul>
+	 */
 	public boolean moveRight() {
 		boolean didItMove = currentPiece.movePiece(board, 1, 0);
-		if(didItMove) cyclesOnGround--;
-		paint();
+		if(didItMove && cyclesOnGround > 0) cyclesOnGround--;
+		refresh();
 		return didItMove;
 	}
 	
+	/**
+	 * Sets the controls from the controls list
+	 */
 	public void setControls() {
-		for(KeyListener listener:gui.getKeyListeners()) {
-			gui.removeKeyListener(listener);
-		}
-		for(GameAction action:controls) {
-			gui.addKeyListener(action);
-		}
+		
 	}
 	
+	/**
+	 * Rotates the piece clockwise or counterclockwise, and refreshes the screen afterwards.
+	 * It prevents the piece from being placed if it hits ground if used fast enough, and
+	 * returns true if it was able to rotate.
+	 * 
+	 * @param clockwise - boolean
+	 * @return
+	 */
 	public boolean rotate(boolean clockwise) {
 		boolean didItRotate = currentPiece.rotate(board, clockwise);
-		if(didItRotate) cyclesOnGround--;
-		paint();
+		if(didItRotate && cyclesOnGround > 0) cyclesOnGround--;
+		refresh();
 		return didItRotate;
 	}
 	
-	public void paint() {
-		gui.setBoard(board);
-		gui.setPiecesPool(piecesPool, visibleUpcomingPieces);
-		gui.setSavedPiece(savedPiece);
-		gui.setPiece(currentPiece);
-		gui.setLevel(level);
-		gui.setLines(lines);
-		gui.setScore(score);
-		gui.repaint();
+	/**
+	 * Does all the steps required to refresh the screen
+	 */
+	public void refresh() {
+		
 	}
 
+	/**
+	 * Leaves the piece on the board as it is, and calls for the next piece to arrive.
+	 * @return Number of lines cleared if there are - int
+	 */
 	public int leavePiece() {
 		int lines;
 		for (Tile tile : currentPiece.getTiles()) {
 			board.paintPos(currentPiece.getTileAbsoluteX(tile), currentPiece.getTileAbsoluteY(tile), tile.getValue());
-			if(currentPiece.getTileAbsoluteY(tile) >= 19) gameOver();
+			if(currentPiece.getTileAbsoluteY(tile) >= 20) gameOver();
 		}
 		nextPiece();
 		lines = board.cleanLines();
-		paint();
+		refresh();
 		canSave = true;
 		return lines;
 	}
 
+	/**
+	 * Gets the next piece of the pool, and if there aren't enough to be displayed 
+	 * on the screen, more will be generated.
+	 */
 	private void nextPiece() {
 		Piece piece = piecesPool.remove(0);
 		piece.initializePiece();
@@ -114,6 +169,9 @@ public class GameLogic {
 		}
 	}
 
+	/**
+	 * Generates a set of all pieces and shuffles them, to then be added into the pool
+	 */
 	private void generateUpcomingPieces() {
 		List<Piece> pieces = new ArrayList<>();
 		for (int i=0; i<7; i++) {
@@ -125,8 +183,14 @@ public class GameLogic {
 		piecesPool.addAll(pieces);
 	}
 	
-	private Piece getNewPieceOfType(int n) {
-		return PiecesList.values()[n].getPiece();
+	/**
+	 * Gets a piece of the specified type from the PiecesList enum
+	 * 
+	 * @param type - int
+	 * @return
+	 */
+	private Piece getNewPieceOfType(int type) {
+		return PiecesList.values()[type].getPiece();
 	}
 
 	public void savePieces() {
@@ -139,11 +203,15 @@ public class GameLogic {
 				savedPiece = getNewPieceOfType(currentPiece.getPieceType());
 				nextPiece();
 			}
-			paint();
+			refresh();
 			canSave = false;
 		}
 	}
 	
+	/**
+	 * It will repeatedly pull the piece down until it reaches ground in an instant.
+	 * It also increases the score accordingly.
+	 */
 	public void dropDown() {
 		while(currentPiece.movePiece(board, 0, -1)) {
 			increaseScore(SCORE_FOR_HARDDROP);
@@ -151,10 +219,18 @@ public class GameLogic {
 		addLines(leavePiece());
 	}
 	
+	/**
+	 * Increases the score
+	 * @param n  int
+	 */
 	public void increaseScore(int n) {
 		score += n;
 	}
 	
+	/**
+	 * Increases the number of lines cleared
+	 * @param n - int
+	 */
 	public void addLines(int n) {
 		int lastLinesNumber = lines;
 		if(n>0) increaseScore(SCORE_PER_LINES[n-1] * level);
@@ -162,10 +238,16 @@ public class GameLogic {
 		if(lastLinesNumber / 10 < lines / 10) levelUp();
 	}
 	
+	/**
+	 * Increases the level of difficulty
+	 */
 	public void levelUp() {
 		level++;
 	}
-
+	
+	/**
+	 * Triggers the game to stop
+	 */
 	public void gameOver() {
 		
 	}
